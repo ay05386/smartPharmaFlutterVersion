@@ -8,28 +8,34 @@ class ProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<ProductItem> products = [];
+
+    if (category == "Men's Wear") {
+      products = [
+        ProductItem(name: 'Shirt', image: 'assets/images/image0.jpg', price: 19.99),
+        ProductItem(name: 'Jeans', image: 'assets/images/image1.jpg', price: 29.99),
+        ProductItem(name: 'Suit', image: 'assets/images/image2.jpg', price: 39.99),
+      ];
+    } else if (category == "Women's Wear") {
+      products = [
+        ProductItem(name: 'Shirt', image: 'assets/images/image3.jpg', price: 19.99),
+        ProductItem(name: 'Jeans', image: 'assets/images/image4.jpg', price: 29.99),
+        ProductItem(name: 'Suit', image: 'assets/images/image5.jpg', price: 39.99),
+      ];
+    } else if (category == "Kid's Wear") {
+      products = [
+        ProductItem(name: 'Shirt', image: 'assets/images/image5.jpg', price: 19.99),
+        ProductItem(name: 'Jeans', image: 'assets/images/image6.jpg', price: 29.99),
+        ProductItem(name: 'Suit', image: 'assets/images/image8.jpg', price: 39.99),
+      ];
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(category),
       ),
       body: ListView(
-        children: [
-          ProductItem(
-            name: 'Item 1',
-            image: 'assets/images/image0.jpg',
-            price: 19.99,
-          ),
-          ProductItem(
-            name: 'Item 2',
-            image: 'assets/images/image1.jpg',
-            price: 29.99,
-          ),
-          ProductItem(
-            name: 'Item 3',
-            image: 'assets/images/image2.jpg',
-            price: 39.99,
-          ),
-        ],
+        children: products,
       ),
     );
   }
@@ -45,6 +51,10 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: CircleAvatar(
+        backgroundImage: AssetImage(image),
+        radius: 25,
+      ),
       title: Text(name),
       subtitle: Text('\$${price.toStringAsFixed(2)}'),
       onTap: () {
