@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../localDataBase/localUserDB.dart';
+import 'loginPage.dart'; // Import the login page
 
 class SignUp extends StatefulWidget {
   @override
@@ -8,10 +9,10 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   late UserDB userDatabase;
-  bool T = true;
-  TextEditingController password = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController name = TextEditingController();
+  bool _obscurePassword = true;
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
@@ -20,23 +21,9 @@ class _SignUpState extends State<SignUp> {
     userDatabase.CreateDatabaseAndTables();
   }
 
-  void _showDialog(String title, String content) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title, style: TextStyle(color: Colors.black, fontSize: 30)),
-          content: Text(content, style: TextStyle(color: Colors.black, fontSize: 30)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK', style: TextStyle(color: Colors.black, fontSize: 30)),
-            ),
-          ],
-        );
-      },
+  void _navigateToLogin() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => Login()),
     );
   }
 
@@ -49,60 +36,66 @@ class _SignUpState extends State<SignUp> {
       ),
       body: Column(
         children: [
-          //NAME TEXT FORM FIELD
+          // NAME TEXT FORM FIELD
           Container(
             padding: EdgeInsets.all(10),
             child: TextFormField(
-              controller: name,
+              controller: nameController,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.supervised_user_circle),
-                  hintText: 'Write your name',
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 25),
-                  label: Text('Name', style: TextStyle(color: Colors.black, fontSize: 30))),
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.supervised_user_circle),
+                hintText: 'Write your name',
+                hintStyle: TextStyle(color: Colors.black, fontSize: 25),
+                label: Text('Name', style: TextStyle(color: Colors.black, fontSize: 30)),
+              ),
             ),
           ),
-          //EMAIL TEXT FORM FIELD
+          // EMAIL TEXT FORM FIELD
           Container(
             padding: EdgeInsets.all(10),
             child: TextFormField(
-              controller: email,
+              controller: emailController,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.email_outlined),
-                  hintText: 'Write your email',
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 25),
-                  label: Text('Email', style: TextStyle(color: Colors.black, fontSize: 30))),
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.email_outlined),
+                hintText: 'Write your email',
+                hintStyle: TextStyle(color: Colors.black, fontSize: 25),
+                label: Text('Email', style: TextStyle(color: Colors.black, fontSize: 30)),
+              ),
             ),
           ),
-          //PASSWORD TEXT FORM FIELD
+          // PASSWORD TEXT FORM FIELD
           Container(
             padding: EdgeInsets.all(10),
             child: TextFormField(
-              controller: password,
-              obscureText: T,
+              controller: passwordController,
+              obscureText: _obscurePassword,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        T = !T;
-                      });
-                    },
-                    icon: Icon(Icons.remove_red_eye),
-                  ),
-                  hintText: 'Write your password',
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 25),
-                  label: Text('Password', style: TextStyle(color: Colors.black, fontSize: 25))),
+                border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                  icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                ),
+                hintText: 'Write your password',
+                hintStyle: TextStyle(color: Colors.black, fontSize: 25),
+                label: Text('Password', style: TextStyle(color: Colors.black, fontSize: 25)),
+              ),
             ),
           ),
-          //SIGNUP BUTTON
+          // SIGNUP BUTTON
           MaterialButton(
             color: Colors.orange,
             onPressed: () async {
               await userDatabase.insertUser(
-                  name: name.text, email: email.text, password: password.text);
-              _showDialog('Success', 'SignUp successful!');
+                name: nameController.text,
+                email: emailController.text,
+                password: passwordController.text,
+              );
+              _navigateToLogin(); // Navigate to login screen upon successful signup
             },
             child: Text("SignUp", style: TextStyle(color: Colors.black, fontSize: 25)),
           ),
