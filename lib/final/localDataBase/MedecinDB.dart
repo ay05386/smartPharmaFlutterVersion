@@ -2,50 +2,62 @@ import 'package:sqflite/sqflite.dart';
 
 class MedicineDB {
   List<Map> medicine = [];
-  late Database db;
-  CreateDatabaseAndTables ()async{
-    db=await openDatabase(
+  Database? db;
+
+  Future<void> CreateDatabaseAndTables() async {
+    db = await openDatabase(
       'medicine.db',
       version: 1,
-      onCreate: (db, version) async{
-        print("data base created !");
-        await db.execute('create table medicines( '
-            ' medicine_id INTEGER PRIMARY KEY,'
-            'medicine_name TEXT,'
-            'medicine_effective TEXT,'
-            'medicine_quantity INTEGER,'
-            ' medicine_sold INTEGER,'
-            'medicine_price INTEGER,'
-            'name text,email text,password text,url text)');
-        print("table created !");
+      onCreate: (db, version) async {
+        print("database created!");
+        await db.execute('''
+          CREATE TABLE medicines(
+            medicine_id INTEGER PRIMARY KEY,
+            medicine_name TEXT,
+            medicine_effective TEXT,
+            medicine_quantity INTEGER,
+            medicine_sold INTEGER,
+            medicine_price INTEGER,
+            name TEXT,
+            email TEXT,
+            password TEXT,
+            url TEXT
+          )
+        ''');
+        print("table created!");
       },
       onOpen: (db) {
-        print("open database !");
+        print("open database!");
       },
     );
-    showData().then((value) {
-      medicine=value;
-    });
+    medicine = await showData();
   }
-  insertMedicine({
+
+  Future<void> insertMedicine({
     required String name,
     required String effective,
     required int quantity,
     required int sold,
     required int price,
-  })
-  {
-    db.transaction((txn) async{
-      txn.rawInsert('insert into medicines(medicine_name,medicine_effective,medicine_quantity,medicine_sold,medicine_price)'
-          'values("$name","$effective",$quantity,$sold,$price)').then((value){
-        print("inserted raw $value");
-      }).catchError((e){
-        print(e);
-      });
+  }) async {
+    await db?.transaction((txn) async {
+      int id = await txn.rawInsert('''
+        INSERT INTO medicines(
+          medicine_name,
+          medicine_effective,
+          medicine_quantity,
+          medicine_sold,
+          medicine_price
+        ) VALUES(?, ?, ?, ?, ?)
+      ''', [name, effective, quantity, sold, price]);
+      print("inserted raw $id");
     });
-
   }
-  Future <List<Map>> showData(){
-    return db.rawQuery('select * from medicines');
+
+  Future<List<Map>> showData() async {
+    if (db == null) {
+      return [];
+    }
+    return await db!.rawQuery('SELECT * FROM medicines');
   }
 }
