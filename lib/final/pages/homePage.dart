@@ -1,4 +1,7 @@
+
+import 'package:first/final/pages/stock.dart';
 import 'package:flutter/material.dart';
+import '../localDataBase/MedecinDB.dart';
 import '../localDataBase/localUserDB.dart';
 
 class HomePage extends StatefulWidget {
@@ -7,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late UserDB userDatabase;
+  late MedicineDB userDatabase;
   bool isDatabaseInitialized = false;
 
   @override
@@ -17,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> initializeDatabase() async {
-    userDatabase = UserDB();
+    userDatabase = MedicineDB();
     await userDatabase.CreateDatabaseAndTables();
     // Add a small delay to ensure all operations are complete
     await Future.delayed(Duration(milliseconds: 500));
@@ -28,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Map<String, dynamic>>> fetchLowQuantityMeds() async {
     try {
-      List<Map> meds = await userDatabase.showMedicine();
+      List<Map> meds = await userDatabase.showData();
       List<Map<String, dynamic>> typedMeds = List<Map<String, dynamic>>.from(meds);
       typedMeds.sort((a, b) => a['medicine_quantity'].compareTo(b['medicine_quantity']));
       return typedMeds.take(10).toList();
@@ -40,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Map<String, dynamic>>> fetchMostSoldMeds() async {
     try {
-      List<Map> meds = await userDatabase.showMedicine();
+      List<Map> meds = await userDatabase.showData();
       List<Map<String, dynamic>> typedMeds = List<Map<String, dynamic>>.from(meds);
       typedMeds.sort((a, b) => b['medicine_sold'].compareTo(a['medicine_sold']));
       return typedMeds.take(10).toList();
@@ -130,6 +133,15 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
+          MaterialButton(onPressed: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (c){
+              return Stock();
+            }),
+
+            );
+          },
+            child: Text("stock"),
+          )
         ],
       )
           : Center(child: CircularProgressIndicator()),
