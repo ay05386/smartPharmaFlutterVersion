@@ -1,8 +1,7 @@
-
-import 'package:first/final/pages/stock.dart';
 import 'package:flutter/material.dart';
 import '../localDataBase/MedecinDB.dart';
-import '../localDataBase/localUserDB.dart';
+import 'stock.dart';
+import 'loginPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -53,12 +52,47 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _logout() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home', style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: Colors.orange,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text("User Name"),
+              accountEmail: Text("User Email"),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Text("U"),
+              ),
+              decoration: BoxDecoration(color: Colors.orange),
+            ),
+            ListTile(
+              title: Text("Home"),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              title: Text("Stock"),
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Stock()));
+              },
+            ),
+            ListTile(
+              title: Text("Logout"),
+              onTap: _logout,
+            ),
+          ],
+        ),
       ),
       body: isDatabaseInitialized
           ? Column(
@@ -133,15 +167,6 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          MaterialButton(onPressed: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (c){
-              return Stock();
-            }),
-
-            );
-          },
-            child: Text("stock"),
-          )
         ],
       )
           : Center(child: CircularProgressIndicator()),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'loginPage.dart';
 import '../localDataBase/MedecinDB.dart';
 import 'addMedicine.dart';
+import 'homePage.dart';
 
 class Stock extends StatefulWidget {
   const Stock({super.key});
@@ -34,10 +36,44 @@ class _StockState extends State<Stock> {
     await _initializeDatabase();
   }
 
+  void _logout() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text("User Name"),
+              accountEmail: Text("User Email"),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Text("U"),
+              ),
+              decoration: BoxDecoration(color: Colors.orange),
+            ),
+            ListTile(
+              title: Text("Home"),
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+              },
+            ),
+            ListTile(
+              title: Text("Stock"),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              title: Text("Logout"),
+              onTap: _logout,
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: Text("Stock", style: TextStyle(color: Colors.black)),
         actions: [
