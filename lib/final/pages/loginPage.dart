@@ -1,7 +1,7 @@
-import 'package:first/final/pages/signUpPage.dart';
 import 'package:flutter/material.dart';
 import '../localDataBase/localUserDB.dart';
 import 'homePage.dart';
+import 'signUpPage.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -52,39 +52,41 @@ class _LoginState extends State<Login> {
       ),
       body: Column(
         children: [
-          //EMAIL FIELD
+          // EMAIL FIELD
           Container(
             padding: EdgeInsets.all(10),
             child: TextFormField(
               controller: email,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.email),
-                  hintText: 'Write your email',
-                  label: Text('Email', style: TextStyle(color: Colors.black, fontSize: 30))),
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.email),
+                hintText: 'Write your email',
+                label: Text('Email', style: TextStyle(color: Colors.black, fontSize: 30)),
+              ),
             ),
           ),
-          //PASSWORD FIELD
+          // PASSWORD FIELD
           Container(
             padding: EdgeInsets.all(10),
             child: TextFormField(
               obscureText: T,
               controller: password,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        T = !T;
-                      });
-                    },
-                    icon: Icon(Icons.remove_red_eye),
-                  ),
-                  hintText: 'Write your password',
-                  label: Text('Password', style: TextStyle(color: Colors.black, fontSize: 25))),
+                border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      T = !T;
+                    });
+                  },
+                  icon: Icon(Icons.remove_red_eye),
+                ),
+                hintText: 'Write your password',
+                label: Text('Password', style: TextStyle(color: Colors.black, fontSize: 25)),
+              ),
             ),
           ),
-          //DON'T HAVE ACCOUNT NAVIGATE TO SIGNUP
+          // DON'T HAVE ACCOUNT NAVIGATE TO SIGNUP
           Column(
             children: [
               Row(
@@ -113,7 +115,10 @@ class _LoginState extends State<Login> {
                 if (users[i]['email'] == email.text && users[i]['password'] == password.text) {
                   isValidUser = true;
                   _showDialog('Success', 'Login successful!');
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(
+                    userData: Map<String, dynamic>.from(users[i]), // Cast to Map<String, dynamic>
+                    userDB: userDatabaseLogin,
+                  )));
                   break;
                 }
               }

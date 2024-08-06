@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import '../localDataBase/MedecinDB.dart';
+import '../localDataBase/localUserDB.dart';
 import 'stock.dart';
 import 'loginPage.dart';
 
 class HomePage extends StatefulWidget {
+  final Map<String, dynamic> userData;
+  final UserDB userDB;
+
+  HomePage({required this.userData, required this.userDB});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -21,7 +27,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> initializeDatabase() async {
     userDatabase = MedicineDB();
     await userDatabase.CreateDatabaseAndTables();
-    // Add a small delay to ensure all operations are complete
     await Future.delayed(Duration(milliseconds: 500));
     setState(() {
       isDatabaseInitialized = true;
@@ -52,10 +57,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _logout() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,31 +66,42 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: Drawer(
         child: ListView(
-          children: <Widget>[
+          padding: EdgeInsets.zero,
+          children: [
             UserAccountsDrawerHeader(
-              accountName: Text("User Name"),
-              accountEmail: Text("User Email"),
+              accountName: Text(widget.userData['name']),
+              accountEmail: Text(widget.userData['email']),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Text("U"),
+                child: Text(
+                  widget.userData['name'][0].toUpperCase(),
+                  style: TextStyle(fontSize: 40.0),
+                ),
               ),
-              decoration: BoxDecoration(color: Colors.orange),
             ),
             ListTile(
-              title: Text("Home"),
+              title: Text('Home'),
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(
+                  userData: widget.userData,
+                  userDB: widget.userDB,
+                )));
               },
             ),
             ListTile(
-              title: Text("Stock"),
+              title: Text('Stock'),
               onTap: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Stock()));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Stock(
+                  userData: widget.userData,
+                  userDB: widget.userDB,
+                )));
               },
             ),
             ListTile(
-              title: Text("Logout"),
-              onTap: _logout,
+              title: Text('Logout'),
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+              },
             ),
           ],
         ),

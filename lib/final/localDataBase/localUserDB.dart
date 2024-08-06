@@ -86,4 +86,15 @@ class UserDB {
   Future<void> deleteUser({required int id}) async {
     await db.rawDelete('DELETE FROM user WHERE id=$id');
   }
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    List<Map> results = await db.query(
+      'user',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    if (results.isNotEmpty) {
+      return Map<String, dynamic>.from(results.first);
+    }
+    return null;
+  }
 }
